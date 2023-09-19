@@ -13,9 +13,11 @@
   <body>
     <div class="banner">
       <h1 class="banner-head">
-        117 AQI<br>
-        Unhealthy for sensitive groups
+        <span id="aqi">--</span> AQI<br>
+        <span id="health-level">Loading...</span>
+        <div id="colorLevel" class="color-level"></div>
       </h1>
+      <div id="weatherData" class="weather"></div>
     </div>
 
     <div class="l-content">
@@ -25,7 +27,8 @@
             <div class="pricing-table-header">
               <h2>Particles PM 2.5</h2>
               <span class="pricing-table-price">
-                52<span>µg/m³</span>
+                <span id="pm25">--</span>
+                <span class="key">µg/m³</span>
               </span>
             </div>
           </div>
@@ -36,7 +39,8 @@
             <div class="pricing-table-header">
               <h2>Particles pm1.0 </h2>
               <span class="pricing-table-price">
-                34<span>µg/m³</span>
+                <span id="pm1">--</span>
+                <span class="key">µg/m³</span>
               </span>
             </div>
           </div>
@@ -47,7 +51,8 @@
             <div class="pricing-table-header">
               <h2>Particles PM10</h2>
               <span class="pricing-table-price">
-                64<span>µg/m³</span>
+                <span id="pm10">--</span>
+                <span class="key">µg/m³</span>
               </span>
             </div>
           </div>
@@ -56,11 +61,8 @@
     </div>
     <!-- end l-content -->
 
-    <div class="footer l-box">
-      <p>
-        <a href="#">Try now</a> for 14 days. No credit card required. Header image courtesy of <a
-          href='http://unsplash.com/'>Unsplash</a>.
-      </p>
+    <div class="footer l-box" id="footer-data">
+
     </div>
 
     <script src="/main.js"></script>

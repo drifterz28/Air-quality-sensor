@@ -21,17 +21,33 @@ const tempValues = {
   "pm100 env": 64,
   "particles 03um": 8136,
   "particles 10um": 498,
-  "pm25 env": 52,
+  "pm25 env": 2,
   "particles 05um": 2394,
   "particles 25um": 28,
   "particles 100um": 0,
   "particles 50um": 4,
 };
 
+const airQualityIndex = (aqi) => {
+  let aqiLevel = 0;
+  if (aqi > 51 && aqi <= 100) {
+    aqiLevel = 1;
+  } else if (aqi > 101 && aqi <= 150) {
+    aqiLevel = 2;
+  } else if (aqi > 151 && aqi <= 200) {
+    aqiLevel = 3;
+  } else if (aqi > 201 && aqi <= 300) {
+    aqiLevel = 4;
+  } else if (aqi > 301) {
+    aqiLevel = 5;
+  }
+  return aqiLevel;
+};
+
 function linear(AQIhigh, AQIlow, concHigh, concLow, concentration) {
   const conc = parseFloat(concentration);
   const a =
-    ((conc - conclow) / (concHigh - concLow)) * (AQIhigh - AQIlow) + AQIlow;
+    ((conc - concLow) / (concHigh - concLow)) * (AQIhigh - AQIlow) + AQIlow;
   return Math.round(a);
 }
 // linear and AQIPM25 functions from https://www.airnow.gov/sites/default/files/custom-js/conc-aqi.js
@@ -59,6 +75,39 @@ function AQIPM25(concentration) {
   return AQI;
 }
 
-const main = () => {};
+const weatherHTML = (weather) => {
+  console.log(weather);
+  const temp = (weather.tp * 9) / 5 + 32;
+  return `Temp: ${temp}, Humitiy: ${weather.hu}`;
+};
+
+const main = async () => {
+  const weatherResponse = await fetch(
+    "https://api.airvisual.com/v2/nearest_city?lat=44.0795136&lon=-121.274368&key=700030cf-0d66-4fe1-a3cb-e2c6582a7a8c"
+  );
+  const weather = await weatherResponse.json();
+  const response = await fetch("/data");
+  const data = await response.json();
+  const weatherNode = document.getElementById("weatherData");
+  const pm25 = document.getElementById("pm25");
+  const pm1 = document.getElementById("pm1");
+  const pm10 = document.getElementById("pm10");
+  const aqi = document.getElementById("aqi");
+  const footer = document.getElementById("footer-data");
+  const colorLevel = document.getElementById("colorLevel");
+  const healthLevel = document.getElementById("health-level");
+  const aqiLevel = AQIPM25(data["pm25 env"]);
+  const level = airQualityIndex(aqiLevel);
+  const realAqi = weather.data.current.pollution.aqius;
+  const weatherItems = weather.data.current.weather;
+  colorLevel.style.backgroundColor = airIndexColors[level];
+  healthLevel.textContent = airIndexMap[level];
+  aqi.textContent = aqiLevel;
+  pm25.textContent = data["pm25 env"];
+  pm10.textContent = data["pm100 env"];
+  pm1.textContent = data["pm10 env"];
+  footer.textContent = `CPU1 Temp: ${data["cpuTemp0"]}, CPU2 temp: ${data["cpuTemp1"]}, other AQI ${realAqi}`;
+  weatherNode.textContent = weatherHTML(weatherItems);
+};
 
 window.addEventListener("DOMContentLoaded", main);

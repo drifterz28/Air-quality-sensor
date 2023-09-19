@@ -1,0 +1,13 @@
+{
+  "pm10 env": 34,
+  "pm100 env": 64,
+  "particles 03um": 8136,
+  "particles 10um": 498,
+  "pm25 env": 52,
+  "particles 05um": 2394,
+  "particles 25um": 28,
+  "particles 100um": 0,
+  "particles 50um": 4,
+  "cpuTemp0": 100,
+  "cpuTemp1": 100
+}
