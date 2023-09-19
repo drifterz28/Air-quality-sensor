@@ -1,8 +1,8 @@
 const airIndexMap = [
   "Good",
   "Moderate",
-  "Unhealthy",
-  "Very Poor",
+  "Unhealthy for Sensitive Groups",
+  "unhealthy",
   "Very unhealthy",
   "Hazardous",
 ];
@@ -15,18 +15,6 @@ const airIndexColors = [
   "#AD1457",
   "#880E4F",
 ];
-
-const tempValues = {
-  "pm10 env": 34,
-  "pm100 env": 64,
-  "particles 03um": 8136,
-  "particles 10um": 498,
-  "pm25 env": 2,
-  "particles 05um": 2394,
-  "particles 25um": 28,
-  "particles 100um": 0,
-  "particles 50um": 4,
-};
 
 const airQualityIndex = (aqi) => {
   let aqiLevel = 0;
@@ -74,9 +62,28 @@ function AQIPM25(concentration) {
   }
   return AQI;
 }
-
+function AQIPM10(concentration) {
+  const conc = parseFloat(concentration);
+  const c = Math.floor(conc);
+  let AQI;
+  if (c >= 0 && c < 55) {
+    AQI = linear(50, 0, 54, 0, c);
+  } else if (c >= 55 && c < 155) {
+    AQI = linear(100, 51, 154, 55, c);
+  } else if (c >= 155 && c < 255) {
+    AQI = linear(150, 101, 254, 155, c);
+  } else if (c >= 255 && c < 355) {
+    AQI = linear(200, 151, 354, 255, c);
+  } else if (c >= 355 && c < 425) {
+    AQI = linear(300, 201, 424, 355, c);
+  } else if (c >= 425 && c < 505) {
+    AQI = linear(400, 301, 504, 425, c);
+  } else if (c >= 505 && c < 605) {
+    AQI = linear(500, 401, 604, 505, c);
+  }
+  return AQI;
+}
 const weatherHTML = (weather) => {
-  console.log(weather);
   const temp = (weather.tp * 9) / 5 + 32;
   return `Temp: ${temp}, Humitiy: ${weather.hu}`;
 };
@@ -86,26 +93,32 @@ const main = async () => {
     "https://api.airvisual.com/v2/nearest_city?lat=44.0795136&lon=-121.274368&key=700030cf-0d66-4fe1-a3cb-e2c6582a7a8c"
   );
   const weather = await weatherResponse.json();
-  const response = await fetch("/data");
+  const response = await fetch("/data.json");
   const data = await response.json();
   const weatherNode = document.getElementById("weatherData");
   const pm25 = document.getElementById("pm25");
-  const pm1 = document.getElementById("pm1");
   const pm10 = document.getElementById("pm10");
   const aqi = document.getElementById("aqi");
   const footer = document.getElementById("footer-data");
   const colorLevel = document.getElementById("colorLevel");
   const healthLevel = document.getElementById("health-level");
   const aqiLevel = AQIPM25(data["pm25 env"]);
+  const pm10Level = airQualityIndex(AQIPM10(data["pm100 env"]));
   const level = airQualityIndex(aqiLevel);
   const realAqi = weather.data.current.pollution.aqius;
   const weatherItems = weather.data.current.weather;
+  const pm25Wrapper = pm25.parentElement.parentElement;
+  const pm10Wrapper = pm10.parentElement.parentElement;
+
   colorLevel.style.backgroundColor = airIndexColors[level];
+  pm25Wrapper.style.backgroundColor = airIndexColors[level];
+  pm25Wrapper.style.color = level <= 2 ? "#000" : "#fff";
   healthLevel.textContent = airIndexMap[level];
   aqi.textContent = aqiLevel;
+  pm10Wrapper.style.backgroundColor = airIndexColors[pm10Level];
+  pm10Wrapper.style.color = pm10Level <= 2 ? "#000" : "#fff";
   pm25.textContent = data["pm25 env"];
   pm10.textContent = data["pm100 env"];
-  pm1.textContent = data["pm10 env"];
   footer.textContent = `CPU1 Temp: ${data["cpuTemp0"]}, CPU2 temp: ${data["cpuTemp1"]}, other AQI ${realAqi}`;
   weatherNode.textContent = weatherHTML(weatherItems);
 };
