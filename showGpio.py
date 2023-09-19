@@ -1,6 +1,7 @@
 import board
 import microcontroller
 
+
 def showPins():
     board_pins = []
     for pin in dir(microcontroller.pin):
