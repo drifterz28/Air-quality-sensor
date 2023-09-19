@@ -85,7 +85,7 @@ function AQIPM10(concentration) {
 }
 const weatherHTML = (weather) => {
   const temp = (weather.tp * 9) / 5 + 32;
-  return `Temp: ${temp}, Humitiy: ${weather.hu}`;
+  return `Temp: ${temp}, humidity: ${weather.hu}`;
 };
 
 const main = async () => {

@@ -4,7 +4,7 @@ import wifi
 # import time
 import microcontroller
 from pm25 import readData
-from adafruit_httpserver import Server, Request, Response, FileResponse,JSONResponse
+from adafruit_httpserver import Server, Request, Response, FileResponse, JSONResponse
 
 ssid = os.getenv("WIFI_SSID")
 password = os.getenv("WIFI_PASSWORD")
@@ -16,13 +16,17 @@ print("Connected to", ssid)
 pool = socketpool.SocketPool(wifi.radio)
 server = Server(pool, "/static", debug=True)
 
+
 def c2f(cel):
     return (cel * 9/5) + 32
+
 
 @server.route("/")
 def base(request: Request):
     return FileResponse(request, "index.html", "/static")
-@server.route("/data")
+
+
+@server.route("/data.json")
 def cpu_information_handler(request: Request):
     sensorData = readData()
     data = {
@@ -31,5 +35,6 @@ def cpu_information_handler(request: Request):
     }
     data.update(sensorData)
     return JSONResponse(request, data)
+
 
 server.serve_forever(str(wifi.radio.ipv4_address))
