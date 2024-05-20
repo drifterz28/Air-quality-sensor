@@ -118,7 +118,7 @@ const main = async () => {
   pm25.textContent = data["pm25 env"];
   pm10.textContent = data["pm100 env"];
   footer.textContent = `CPU1 Temp: ${data["cpuTemp0"]}, CPU2 temp: ${data["cpuTemp1"]}, other AQI ${realAqi}`;
-  weatherNode.textContent = weatherHTML(response);
+  weatherNode.textContent = weatherHTML(data);
 };
 
 window.addEventListener("DOMContentLoaded", main);
