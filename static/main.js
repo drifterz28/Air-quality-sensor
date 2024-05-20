@@ -84,7 +84,9 @@ function AQIPM10(concentration) {
   return AQI;
 }
 const weatherHTML = (weather) => {
-  return `Temp: ${weather.temperature}, humidity: ${weather.humidity}%, Pressure: ${weather.pressure}hPa`;
+  return `Temp: ${Math.round(weather.temperature)}, humidity: ${Math.round(
+    weather.humidity
+  )}%, Pressure: ${Math.round(weather.pressure)}hPa`;
 };
 
 const main = async () => {
