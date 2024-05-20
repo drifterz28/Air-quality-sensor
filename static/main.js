@@ -84,8 +84,7 @@ function AQIPM10(concentration) {
   return AQI;
 }
 const weatherHTML = (weather) => {
-  const temp = (weather.tp * 9) / 5 + 32;
-  return `Temp: ${temp}, humidity: ${weather.hu}`;
+  return `Temp: ${weather.temperature}, humidity: ${weather.humidity}%, Pressure: ${weather.pressure}hPa`;
 };
 
 const main = async () => {
@@ -106,7 +105,6 @@ const main = async () => {
   const pm10Level = airQualityIndex(AQIPM10(data["pm100 env"]));
   const level = airQualityIndex(aqiLevel);
   const realAqi = weather.data.current.pollution.aqius;
-  const weatherItems = weather.data.current.weather;
   const pm25Wrapper = pm25.parentElement.parentElement;
   const pm10Wrapper = pm10.parentElement.parentElement;
 
@@ -120,7 +118,7 @@ const main = async () => {
   pm25.textContent = data["pm25 env"];
   pm10.textContent = data["pm100 env"];
   footer.textContent = `CPU1 Temp: ${data["cpuTemp0"]}, CPU2 temp: ${data["cpuTemp1"]}, other AQI ${realAqi}`;
-  weatherNode.textContent = weatherHTML(weatherItems);
+  weatherNode.textContent = weatherHTML(response);
 };
 
 window.addEventListener("DOMContentLoaded", main);
